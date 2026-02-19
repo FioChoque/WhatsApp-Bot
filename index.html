@@ -1,0 +1,3208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Adherentes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(to right, #4a6fa5, #2c3e50);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h1 i {
+            color: #4CAF50;
+        }
+
+        .subtitle {
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        /* Estilos para el usuario y cierre de sesión */
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            color: white;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.3s;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item.logout {
+            color: #f44336;
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: #ffebee;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .card.active {
+            border: 3px solid #4a6fa5;
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2), 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 30px;
+        }
+
+        .total {
+            background: #e3f2fd;
+            color: #2196F3;
+        }
+
+        .adherentes {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .no-adherentes {
+            background: #fff3e0;
+            color: #FF9800;
+        }
+
+        .citas {
+            background: #f3e5f5;
+            color: #9C27B0;
+        }
+
+        .whatsapp-sender {
+            background: #e8f5e9;
+            color: #25D366;
+        }
+
+        .whatsapp-start {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+
+        .card-info h3 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+
+        .card-info p {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #4a6fa5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3a5a8a;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #3d8b40;
+        }
+
+        .btn-warning {
+            background: #FF9800;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #F57C00;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #1da851;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-start-server {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-start-server:hover {
+            background: linear-gradient(135deg, #1da851, #0d6e63);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .filtros-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filtro-estado {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .filtro-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filtro-btn.todos {
+            background: #e3f2fd;
+            color: #2196F3;
+        }
+
+        .filtro-btn.adherentes {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .filtro-btn.no-adherentes {
+            background: #fff3e0;
+            color: #FF9800;
+        }
+
+        .filtro-btn.citas {
+            background: #f3e5f5;
+            color: #9C27B0;
+        }
+
+        .filtro-btn.active {
+            box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            transform: scale(1.05);
+        }
+
+        .search-box {
+            flex-grow: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #4a6fa5;
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(to right, #4a6fa5, #2c3e50);
+            color: white;
+        }
+
+        th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        td {
+            padding: 15px;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        .estado {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            min-width: 120px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .estado-adherente {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .estado-no-adherente {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .edad-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #e3f2fd;
+            color: #2196F3;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .dni-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #f3e5f5;
+            color: #7b1fa2;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            min-width: 100px;
+            text-align: center;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* Estilos para alertas de cita */
+        .alerta-cita {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            min-width: 120px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alerta-verde {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .alerta-amarillo {
+            background-color: #fff3e0;
+            color: #f57c00;
+            border: 1px solid #ffcc80;
+        }
+
+        .alerta-rojo {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            animation: pulse 2s infinite;
+        }
+
+        .alerta-pasada {
+            background-color: #f5f5f5;
+            color: #757575;
+            border: 1px solid #e0e0e0;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .telefono-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .codigo-pais {
+            font-size: 11px;
+            color: #666;
+            background: #f0f0f0;
+            padding: 1px 5px;
+            border-radius: 3px;
+            display: inline-block;
+            width: fit-content;
+            font-weight: 500;
+        }
+
+        .numero-telefono {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            letter-spacing: 0.3px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .edit-btn {
+            background-color: #e3f2fd;
+            color: #2196F3;
+        }
+
+        .edit-btn:hover {
+            background-color: #bbdefb;
+        }
+
+        .tamizaje-btn {
+            background-color: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .tamizaje-btn:hover {
+            background-color: #c8e6c9;
+        }
+
+        .cita-btn {
+            background-color: #f3e5f5;
+            color: #9C27B0;
+        }
+
+        .cita-btn:hover {
+            background-color: #e1bee7;
+        }
+
+        .delete-btn {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+
+        .delete-btn:hover {
+            background-color: #ffcdd2;
+        }
+
+        .obs-btn {
+            background-color: #e8eaf6;
+            color: #3f51b5;
+        }
+
+        .obs-btn:hover {
+            background-color: #c5cae9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #4a6fa5;
+            outline: none;
+        }
+
+        .telefono-input-container {
+            position: relative;
+        }
+
+        .telefono-error {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .telefono-valido {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .required-star {
+            color: #f44336;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        footer {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        /* Tooltip para observaciones */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 15px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-size: 14px;
+            font-weight: normal;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Contador filtro */
+        .contador-filtro {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+
+        .reset-filtros {
+            background: #f5f5f5;
+            color: #666;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .reset-filtros:hover {
+            background: #e0e0e0;
+        }
+
+        /* Controles de paginación */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            padding: 8px 15px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #f5f5f5;
+            border-color: #4a6fa5;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-numbers {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-number {
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .page-number:hover {
+            background: #f5f5f5;
+        }
+
+        .page-number.active {
+            background: #4a6fa5;
+            color: white;
+            border-color: #4a6fa5;
+        }
+
+        .page-number.ellipsis {
+            border: none;
+            cursor: default;
+            background: none;
+        }
+
+        .items-per-page {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .items-select {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .items-select:focus {
+            border-color: #4a6fa5;
+            outline: none;
+        }
+
+        /* Estilos para intl-tel-input */
+        .iti {
+            width: 100%;
+        }
+
+        .iti__flag {
+            background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags.png");
+        }
+
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .iti__flag {
+                background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags@2x.png");
+            }
+        }
+
+        .iti__selected-flag {
+            padding: 0 15px;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .iti__arrow {
+            border-top: 4px solid #666;
+        }
+
+        .iti__country-list {
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Flatpickr styles */
+        .flatpickr-calendar {
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .flatpickr-day.selected {
+            background: #4a6fa5;
+            border-color: #4a6fa5;
+        }
+
+        .flatpickr-day.today {
+            border-color: #4CAF50;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 95%;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 1200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .tooltip .tooltiptext {
+                width: 250px;
+                margin-left: -125px;
+            }
+            
+            .filtros-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filtro-estado {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .pagination-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .pagination-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .pagination-numbers {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 10px;
+            }
+        }
+
+        /* Animaciones para mensajes */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Estilos para mensajes de alerta */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+            word-wrap: break-word;
+        }
+        
+        .alert-success {
+            background-color: #4CAF50;
+        }
+        
+        .alert-error {
+            background-color: #f44336;
+        }
+        
+        .alert-info {
+            background-color: #2196F3;
+        }
+        
+        .alert-warning {
+            background-color: #FF9800;
+        }
+
+        /* Filtro de citas */
+        .cita-filtro {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .cita-select {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            min-width: 150px;
+        }
+
+        .cita-select:focus {
+            border-color: #4a6fa5;
+            outline: none;
+        }
+
+        /* Modal para control de servidor */
+        .modal-server .modal-content {
+            max-width: 600px;
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .status-indicator.online {
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline {
+            background: #f44336;
+        }
+
+        .server-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .server-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .server-btn.start {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .server-btn.start:hover {
+            background: #c8e6c9;
+        }
+
+        .server-btn.stop {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .server-btn.stop:hover {
+            background: #ffcdd2;
+        }
+
+        .server-btn.restart {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .server-btn.restart:hover {
+            background: #ffecb3;
+        }
+
+        .server-btn.open {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .server-btn.open:hover {
+            background: #bbdefb;
+        }
+
+        .logs-container {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #1e1e1e;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Modal específico para observaciones */
+        .modal-observaciones .modal-content {
+            max-width: 600px;
+        }
+
+        .observaciones-content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #4a6fa5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .sin-observaciones {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-info">
+                <h1><i class="fas fa-users"></i> Sistema de Gestión de Adherentes</h1>
+                <p class="subtitle">Administración y seguimiento de adherentes, tamizajes y citas</p>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Usuario</div>
+                        <div class="user-role" id="userRole">Administrador</div>
+                    </div>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </div>
+                
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span id="dropdownUserName">Usuario</span>
+                    </div>
+                    <div class="dropdown-item">
+                        <i class="fas fa-envelope"></i>
+                        <span id="dropdownUserEmail">usuario@email.com</span>
+                    </div>
+
+                    <div class="dropdown-item logout" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="dashboard-cards">
+            <div class="card" id="card-total" onclick="filtrarPorEstado('todos')">
+                <div class="card-icon total">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <div class="card-info">
+                    <h3 id="total-adherentes">0</h3>
+                    <p>Total de Personas</p>
+                </div>
+            </div>
+            
+            <div class="card" id="card-adherentes" onclick="filtrarPorEstado('adherente')">
+                <div class="card-icon adherentes">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="card-info">
+                    <h3 id="total-adherentes-activos">0</h3>
+                    <p>Adherentes Activos</p>
+                </div>
+            </div>
+            
+            <div class="card" id="card-no-adherentes" onclick="filtrarPorEstado('no adherente')">
+                <div class="card-icon no-adherentes">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="card-info">
+                    <h3 id="total-no-adherentes">0</h3>
+                    <p>Pendientes de Tamizaje</p>
+                </div>
+            </div>
+            
+            <div class="card" id="card-citas" onclick="filtrarPorCita('con_cita')">
+                <div class="card-icon citas">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="card-info">
+                    <h3 id="total-citas">0</h3>
+                    <p>Próximas Citas</p>
+                </div>
+            </div>
+            
+            <div class="card" id="card-whatsapp" onclick="abrirWhatsAppSender()">
+                <div class="card-icon whatsapp-sender">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="card-info">
+                    <h3><i class="fas fa-external-link-alt"></i></h3>
+                    <p>WhatsApp Auto Sender</p>
+                </div>
+            </div>
+            
+            <div class="card" id="card-start-server" onclick="mostrarModalServidor()">
+                <div class="card-icon whatsapp-start">
+                    <i class="fas fa-server"></i>
+                </div>
+                <div class="card-info">
+                    <h3><i class="fas fa-play-circle"></i></h3>
+                    <p>Iniciar Servidor</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="btn-group">
+                <button class="btn btn-primary" id="btn-nuevo">
+                    <i class="fas fa-plus-circle"></i> Nuevo Adherente
+                </button>
+                <button class="btn-start-server" onclick="mostrarModalServidor()">
+                    <i class="fas fa-server"></i> Controlar Servidor
+                </button>
+            </div>
+            
+            <div class="filtros-container">
+                <div class="filtro-estado">
+                    <button class="filtro-btn todos active" onclick="filtrarPorEstado('todos')" id="filtro-todos">
+                        <i class="fas fa-users"></i> Todos
+                        <span class="contador-filtro" id="contador-todos">0</span>
+                    </button>
+                    <button class="filtro-btn adherentes" onclick="filtrarPorEstado('adherente')" id="filtro-adherentes">
+                        <i class="fas fa-check-circle"></i> Adherentes
+                        <span class="contador-filtro" id="contador-adherentes">0</span>
+                    </button>
+                    <button class="filtro-btn no-adherentes" onclick="filtrarPorEstado('no adherente')" id="filtro-no-adherentes">
+                        <i class="fas fa-clock"></i> No Adherentes
+                        <span class="contador-filtro" id="contador-no-adherentes">0</span>
+                    </button>
+                    <button class="filtro-btn citas" onclick="filtrarPorCita('con_cita')" id="filtro-citas">
+                        <i class="fas fa-calendar-alt"></i> Con Cita
+                        <span class="contador-filtro" id="contador-citas">0</span>
+                    </button>
+                </div>
+                
+                <div class="cita-filtro">
+                    <select id="filtro-estado-cita" class="cita-select" onchange="aplicarFiltroCita()">
+                        <option value="todas">Todas las citas</option>
+                        <option value="24h">Próximas 24h</option>
+                        <option value="3h">Próximas 3h</option>
+                        <option value="2h">Próximas 2h</option>
+        
+                    </select>
+                </div>
+                
+                <button class="reset-filtros" onclick="resetearFiltros()" id="btn-reset-filtros" style="display: none;">
+                    <i class="fas fa-times"></i> Limpiar Filtros
+                </button>
+            </div>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Buscar por nombre, apellido, DNI, teléfono o observaciones...">
+            </div>
+        </div>
+        
+        <div id="info-filtros" style="margin-bottom: 20px; padding: 10px 15px; background: #e3f2fd; border-radius: 10px; display: none;">
+            <i class="fas fa-filter" style="margin-right: 10px;"></i>
+            <span id="texto-filtro"></span>
+            <button onclick="resetearFiltros()" style="background: none; border: none; color: #2196F3; cursor: pointer; margin-left: 15px;">
+                <i class="fas fa-times"></i> Limpiar
+            </button>
+        </div>
+        
+        <div class="table-container">
+            <table id="adherentes-table">
+                <thead>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Teléfono</th>
+                        <th>Edad</th>
+                        <th>Estado</th>
+                        <th>Fecha Cita</th>
+                        <th>Alerta Cita</th>
+                        <th>Fecha Tamizaje</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="adherentes-body">
+                    <!-- Los datos se cargarán aquí -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Controles de Paginación -->
+        <div class="pagination-container" id="pagination-container" style="display: none;">
+            <div class="pagination-info" id="pagination-info">
+                Mostrando 0 a 0 de 0 registros
+            </div>
+            
+            <div class="pagination-controls">
+                <div class="items-per-page">
+                    <span style="color: #666; font-weight: 500;">Mostrar:</span>
+                    <select class="items-select" id="items-per-page" onchange="cambiarItemsPorPagina()">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="all">Todos</option>
+                    </select>
+                </div>
+                
+                <button class="pagination-btn" id="first-page" onclick="irAPagina(1)" disabled>
+                    <i class="fas fa-angle-double-left"></i>
+                </button>
+                <button class="pagination-btn" id="prev-page" onclick="paginaAnterior()" disabled>
+                    <i class="fas fa-angle-left"></i> Anterior
+                </button>
+                
+                <div class="pagination-numbers" id="pagination-numbers">
+                    <!-- Los números de página se generarán aquí -->
+                </div>
+                
+                <button class="pagination-btn" id="next-page" onclick="paginaSiguiente()" disabled>
+                    Siguiente <i class="fas fa-angle-right"></i>
+                </button>
+                <button class="pagination-btn" id="last-page" onclick="irAUltimaPagina()" disabled>
+                    <i class="fas fa-angle-double-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Sistema de Gestión de Adherentes &copy; 2024 | Gestión de Citas y Tamizajes</p>
+        </footer>
+    </div>
+    
+    <!-- Modal para Nuevo/Editar Adherente -->
+    <div class="modal" id="modal-adherente">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Nuevo Adherente</h2>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <form id="form-adherente">
+                <input type="hidden" id="adherente-id">
+                <div class="form-group">
+                    <label for="dni">DNI <span class="required-star">*</span></label>
+                    <input type="text" id="dni" class="form-control" required placeholder="Ingrese el DNI (8 dígitos)" maxlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre <span class="required-star">*</span></label>
+                    <input type="text" id="nombre" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellidos">Apellidos <span class="required-star">*</span></label>
+                    <input type="text" id="apellidos" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono <span class="required-star">*</span></label>
+                    <div class="telefono-input-container">
+                        <input type="tel" id="telefono" class="form-control" required style="padding-left: 100px;">
+                        <div id="telefono-error" class="telefono-error">
+                            <i class="fas fa-exclamation-circle"></i> El número de teléfono debe incluir el código de país
+                        </div>
+                        <div id="telefono-valido" class="telefono-valido">
+                            <i class="fas fa-check-circle"></i> Número válido
+                        </div>
+                    </div>
+                    <small style="color: #666; margin-top: 5px; display: block;">
+                        Selecciona el país y escribe el número completo incluyendo código de área
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="edad">Edad <span class="required-star">*</span></label>
+                    <input type="number" id="edad" class="form-control" min="1" max="120" required placeholder="Ingrese la edad">
+                </div>
+                <div class="form-group">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones" class="form-control" rows="3" placeholder="Observaciones iniciales..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" id="btn-cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btn-guardar" disabled>Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para Actualizar a Adherente -->
+    <div class="modal" id="modal-tamizaje">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Actualizar a Adherente</h2>
+                <button class="close-modal" id="close-modal-tamizaje">&times;</button>
+            </div>
+            <form id="form-tamizaje">
+                <input type="hidden" id="tamizaje-id">
+                <div class="form-group">
+                    <p>¿Confirmar que se realizó el tamizaje a <strong id="nombre-adherente"></strong>?</p>
+                    <p>El estado cambiará a <span class="estado estado-adherente">ADHERENTE</span></p>
+                </div>
+                <div class="form-group">
+                    <label for="observaciones-tamizaje">Observaciones del Tamizaje</label>
+                    <textarea id="observaciones-tamizaje" class="form-control" rows="3" placeholder="Notas sobre el tamizaje realizado..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" id="btn-cancel-tamizaje">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Confirmar Tamizaje</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para Agendar/Editar Cita -->
+    <div class="modal" id="modal-cita">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-cita-title">Agendar Cita</h2>
+                <button class="close-modal" id="close-modal-cita">&times;</button>
+            </div>
+            <form id="form-cita">
+                <input type="hidden" id="cita-id">
+                <div class="form-group">
+                    <p>Agendar cita para: <strong id="nombre-adherente-cita"></strong></p>
+                </div>
+                <div class="form-group">
+                    <label for="fecha-cita">Fecha y Hora de la Cita <span class="required-star">*</span></label>
+                    <input type="text" id="fecha-cita" class="form-control" placeholder="Seleccione fecha y hora" required>
+                </div>
+                <div class="form-group">
+                    <label for="observaciones-cita">Observaciones de la Cita</label>
+                    <textarea id="observaciones-cita" class="form-control" rows="3" placeholder="Notas sobre la cita..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" id="btn-cancel-cita">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar Cita</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para Control del Servidor -->
+    <div class="modal modal-server" id="modal-servidor">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-server"></i> Control del Servidor WhatsApp</h2>
+                <button class="close-modal" id="close-modal-servidor">&times;</button>
+            </div>
+            
+            <div class="server-status">
+                <div class="status-indicator" id="server-status-indicator"></div>
+                <span id="server-status-text">Verificando estado del servidor...</span>
+            </div>
+            
+            <div class="server-controls">
+                <button class="server-btn start" onclick="iniciarServidor()">
+                    <i class="fas fa-play-circle fa-2x"></i>
+                    <span>Iniciar Servidor</span>
+                    <small>Ejecutar node index.js</small>
+                </button>
+                
+                <button class="server-btn stop" onclick="detenerServidor()">
+                    <i class="fas fa-stop-circle fa-2x"></i>
+                    <span>Detener Servidor</span>
+                    <small>Terminar proceso</small>
+                </button>
+                
+                <button class="server-btn restart" onclick="reiniciarServidor()">
+                    <i class="fas fa-redo-alt fa-2x"></i>
+                    <span>Reiniciar Servidor</span>
+                    <small>Detener y volver a iniciar</small>
+                </button>
+                
+                <button class="server-btn open" onclick="abrirWhatsAppSender()">
+                    <i class="fab fa-whatsapp fa-2x"></i>
+                    <span>Abrir WhatsApp</span>
+                    <small>Abrir en navegador</small>
+                </button>
+            </div>
+            
+            <div class="logs-container" id="server-logs">
+                <div class="log-entry">=== Registros del servidor ===</div>
+                <div class="log-entry">Esperando acciones...</div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" id="btn-cancel-servidor">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    
+    <script>
+        // Variables globales
+        let adherentes = [];
+        let adherentesFiltrados = [];
+        let filtroEstadoActual = 'todos';
+        let busquedaActual = '';
+        let filtroCitaActual = 'todas';
+        
+        // Variables de paginación
+        let paginaActual = 1;
+        let itemsPorPagina = 10;
+        let totalPaginas = 1;
+        
+        // Variable para el input de teléfono internacional
+        let telefonoInput = null;
+        // Variable para el datepicker
+        let fechaCitaInput = null;
+        
+        // Variables para el servidor
+        let serverStatus = 'unknown';
+        let serverLogs = [];
+        const MAX_LOG_ENTRIES = 50;
+        
+        // ===== FUNCIONES DE AUTENTICACIÓN =====
+        function verificarAutenticacion() {
+            fetch('check_session.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.authenticated) {
+                        window.location.href = 'login.html';
+                    } else {
+                        cargarDatosUsuario();
+                        setupMenuUsuario();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error verificando autenticación:', error);
+                    window.location.href = 'login.html';
+                });
+        }
+
+        function cargarDatosUsuario() {
+            fetch('user_info.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const usuario = data.usuario;
+                        
+                        // Actualizar UI con datos del usuario
+                        document.getElementById('userName').textContent = `${usuario.nombre} ${usuario.apellido}`;
+                        document.getElementById('userRole').textContent = usuario.rol === 'admin' ? 'Administrador' : 'Usuario';
+                        document.getElementById('dropdownUserName').textContent = `${usuario.nombre} ${usuario.apellido}`;
+                        document.getElementById('dropdownUserEmail').textContent = usuario.email;
+                        
+                        // Generar avatar con iniciales
+                        const iniciales = (usuario.nombre.charAt(0) + usuario.apellido.charAt(0)).toUpperCase();
+                        document.getElementById('userAvatar').textContent = iniciales;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cargando datos de usuario:', error);
+                });
+        }
+
+        function setupMenuUsuario() {
+            const userInfo = document.getElementById('userInfo');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const arrow = userInfo.querySelector('.dropdown-arrow');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            // Mostrar/ocultar menú
+            userInfo.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+                arrow.style.transform = dropdownMenu.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+            
+            // Cerrar menú al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!userInfo.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('show');
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Manejar cierre de sesión
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                cerrarSesion();
+            });
+        }
+
+        function cerrarSesion() {
+            fetch('logout.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        mostrarMensaje('Sesión cerrada exitosamente', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    } else {
+                        mostrarMensaje('Error al cerrar sesión', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cerrando sesión:', error);
+                    mostrarMensaje('Error al cerrar sesión', 'error');
+                });
+        }
+
+        // ===== INICIALIZACIÓN DEL SISTEMA =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Primero verificar autenticación
+            verificarAutenticacion();
+            
+            // Luego cargar adherentes
+            cargarAdherentes();
+            
+            // Event listeners para los botones
+            document.getElementById('btn-nuevo').addEventListener('click', mostrarModalNuevo);
+            document.getElementById('close-modal').addEventListener('click', cerrarModal);
+            document.getElementById('btn-cancel').addEventListener('click', cerrarModal);
+            document.getElementById('form-adherente').addEventListener('submit', guardarAdherente);
+            
+            document.getElementById('close-modal-tamizaje').addEventListener('click', cerrarModalTamizaje);
+            document.getElementById('btn-cancel-tamizaje').addEventListener('click', cerrarModalTamizaje);
+            document.getElementById('form-tamizaje').addEventListener('submit', confirmarTamizaje);
+            
+            document.getElementById('close-modal-cita').addEventListener('click', cerrarModalCita);
+            document.getElementById('btn-cancel-cita').addEventListener('click', cerrarModalCita);
+            document.getElementById('form-cita').addEventListener('submit', guardarCita);
+            
+            // Event listeners para el modal del servidor
+            document.getElementById('close-modal-servidor').addEventListener('click', cerrarModalServidor);
+            document.getElementById('btn-cancel-servidor').addEventListener('click', cerrarModalServidor);
+            
+            // Inicializar datepicker para citas
+            fechaCitaInput = flatpickr("#fecha-cita", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: true,
+                locale: "es",
+                minDate: "today",
+                minuteIncrement: 15,
+                disableMobile: true
+            });
+            
+            // Validar DNI en tiempo real
+            document.getElementById('dni').addEventListener('input', function() {
+                validarDNI();
+            });
+            
+            // Búsqueda en tiempo real
+            document.getElementById('search-input').addEventListener('input', function() {
+                busquedaActual = this.value.toLowerCase();
+                paginaActual = 1; // Resetear a primera página al buscar
+                aplicarFiltros();
+            });
+            
+            // Inicializar el input de teléfono internacional cuando se abra el modal
+            document.getElementById('modal-adherente').addEventListener('shown', function() {
+                if (telefonoInput) {
+                    telefonoInput.destroy();
+                }
+                inicializarInputTelefono();
+            });
+            
+            // Verificar citas próximas cada minuto
+            setInterval(verificarCitasProximas, 60000);
+            verificarCitasProximas(); // Verificar inmediatamente al cargar
+            
+            // Verificar estado del servidor cada 10 segundos
+            setInterval(verificarEstadoServidor, 10000);
+            verificarEstadoServidor(); // Verificar inmediatamente al cargar
+        });
+
+        // ===== FUNCIONES DEL SERVIDOR =====
+        function mostrarModalServidor() {
+            document.getElementById('modal-servidor').style.display = 'flex';
+            actualizarEstadoServidorUI();
+            actualizarLogsUI();
+        }
+
+        function cerrarModalServidor() {
+            document.getElementById('modal-servidor').style.display = 'none';
+        }
+
+        function agregarLog(mensaje) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${mensaje}`;
+            serverLogs.unshift(logEntry);
+            
+            // Limitar el número de entradas en el log
+            if (serverLogs.length > MAX_LOG_ENTRIES) {
+                serverLogs.pop();
+            }
+            
+            actualizarLogsUI();
+        }
+
+        function actualizarLogsUI() {
+            const logsContainer = document.getElementById('server-logs');
+            if (logsContainer) {
+                logsContainer.innerHTML = '<div class="log-entry">=== Registros del servidor ===</div>';
+                
+                serverLogs.forEach(log => {
+                    const logDiv = document.createElement('div');
+                    logDiv.className = 'log-entry';
+                    logDiv.textContent = log;
+                    logsContainer.appendChild(logDiv);
+                });
+                
+                // Scroll al final
+                logsContainer.scrollTop = logsContainer.scrollHeight;
+            }
+        }
+
+        function actualizarEstadoServidorUI() {
+            const indicator = document.getElementById('server-status-indicator');
+            const statusText = document.getElementById('server-status-text');
+            
+            switch(serverStatus) {
+                case 'online':
+                    indicator.className = 'status-indicator online';
+                    statusText.textContent = 'Servidor en ejecución en http://localhost:3000';
+                    break;
+                case 'offline':
+                    indicator.className = 'status-indicator offline';
+                    statusText.textContent = 'Servidor detenido';
+                    break;
+                case 'starting':
+                    indicator.className = 'status-indicator';
+                    indicator.style.background = '#FF9800';
+                    statusText.textContent = 'Iniciando servidor...';
+                    break;
+                case 'stopping':
+                    indicator.className = 'status-indicator';
+                    indicator.style.background = '#FF9800';
+                    statusText.textContent = 'Deteniendo servidor...';
+                    break;
+                default:
+                    indicator.className = 'status-indicator';
+                    indicator.style.background = '#ccc';
+                    statusText.textContent = 'Estado desconocido';
+            }
+        }
+
+        function verificarEstadoServidor() {
+            fetch('http://localhost:3000', { mode: 'no-cors' })
+                .then(() => {
+                    serverStatus = 'online';
+                    actualizarEstadoServidorUI();
+                })
+                .catch(() => {
+                    serverStatus = 'offline';
+                    actualizarEstadoServidorUI();
+                });
+        }
+
+        function iniciarServidor() {
+            if (serverStatus === 'online') {
+                mostrarMensaje('El servidor ya está en ejecución', 'warning');
+                return;
+            }
+            
+            serverStatus = 'starting';
+            actualizarEstadoServidorUI();
+            agregarLog('Iniciando servidor WhatsApp Auto Sender...');
+            
+            // Enviar solicitud al servidor PHP para ejecutar el comando Node.js
+            fetch('start_server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    command: 'start',
+                    path: 'D:\\home\\htdocs\\whatsapp-bot_unido todo\\whatsapp-bot\\what',
+                    script: 'index.js'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                agregarLog(data.message || 'Servidor iniciado correctamente');
+                serverStatus = 'online';
+                actualizarEstadoServidorUI();
+                
+                // Esperar un momento y luego verificar el estado
+                setTimeout(verificarEstadoServidor, 2000);
+                setTimeout(() => abrirWhatsAppSender(), 3000);
+                
+                mostrarMensaje('Servidor iniciado correctamente. Redirigiendo a WhatsApp Auto Sender...', 'success');
+            })
+            .catch(error => {
+                agregarLog('Error al iniciar el servidor: ' + error.message);
+                serverStatus = 'offline';
+                actualizarEstadoServidorUI();
+                mostrarMensaje('Error al iniciar el servidor', 'error');
+            });
+        }
+
+        function detenerServidor() {
+            if (serverStatus === 'offline') {
+                mostrarMensaje('El servidor ya está detenido', 'warning');
+                return;
+            }
+            
+            serverStatus = 'stopping';
+            actualizarEstadoServidorUI();
+            agregarLog('Deteniendo servidor WhatsApp Auto Sender...');
+            
+            fetch('start_server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    command: 'stop',
+                    path: 'D:\\home\\htdocs\\whatsapp-bot_unido todo\\whatsapp-bot\\what'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                agregarLog(data.message || 'Servidor detenido correctamente');
+                serverStatus = 'offline';
+                actualizarEstadoServidorUI();
+                mostrarMensaje('Servidor detenido correctamente', 'success');
+            })
+            .catch(error => {
+                agregarLog('Error al detener el servidor: ' + error.message);
+                serverStatus = 'offline';
+                actualizarEstadoServidorUI();
+                mostrarMensaje('Error al detener el servidor', 'error');
+            });
+        }
+
+        function reiniciarServidor() {
+            agregarLog('Reiniciando servidor...');
+            
+            detenerServidor();
+            
+            // Esperar 2 segundos y luego iniciar
+            setTimeout(() => {
+                iniciarServidor();
+            }, 2000);
+        }
+
+        function abrirWhatsAppSender() {
+            const url = 'http://localhost:3000';
+            
+            fetch(url, { mode: 'no-cors' })
+                .then(() => {
+                    window.open(url, '_blank');
+                    agregarLog('WhatsApp Auto Sender abierto en nueva pestaña');
+                })
+                .catch(() => {
+                    if (confirm('El servidor de WhatsApp Auto Sender parece no estar disponible en http://localhost:3000\n\n¿Deseas intentar iniciarlo primero?')) {
+                        iniciarServidor();
+                    } else {
+                        mostrarMensaje('Asegúrate de que el servidor esté corriendo en http://localhost:3000', 'error');
+                    }
+                });
+        }
+
+        // ===== FUNCIONES PARA EL SISTEMA DE ADHERENTES =====
+        function inicializarInputTelefono() {
+            const input = document.querySelector("#telefono");
+            telefonoInput = window.intlTelInput(input, {
+                initialCountry: "pe", // Perú por defecto
+                preferredCountries: ["pe", "us", "mx", "co", "ar", "es", "cl"],
+                separateDialCode: true,
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                customContainer: "w-100",
+                nationalMode: false,
+                formatOnDisplay: true,
+                autoPlaceholder: "polite"
+            });
+            
+            input.addEventListener('input', validarTelefono);
+            input.addEventListener('blur', validarTelefono);
+            input.addEventListener('countrychange', validarTelefono);
+            
+            setTimeout(() => document.getElementById('dni').focus(), 100);
+        }
+        
+        function validarTelefono() {
+            const input = document.querySelector("#telefono");
+            const errorDiv = document.getElementById('telefono-error');
+            const validoDiv = document.getElementById('telefono-valido');
+            const guardarBtn = document.getElementById('btn-guardar');
+            
+            if (telefonoInput) {
+                const numero = telefonoInput.getNumber();
+                const esValido = telefonoInput.isValidNumber();
+                
+                if (numero && esValido) {
+                    errorDiv.style.display = 'none';
+                    validoDiv.style.display = 'block';
+                    input.style.borderColor = '#4CAF50';
+                } else if (numero && !esValido) {
+                    errorDiv.style.display = 'block';
+                    validoDiv.style.display = 'none';
+                    input.style.borderColor = '#f44336';
+                } else {
+                    errorDiv.style.display = 'none';
+                    validoDiv.style.display = 'none';
+                    input.style.borderColor = '#ddd';
+                }
+                
+                const dniValido = validarDNI();
+                guardarBtn.disabled = !(dniValido && esValido);
+            }
+        }
+        
+        function validarDNI() {
+            const dniInput = document.getElementById('dni');
+            const dni = dniInput.value.trim();
+            const guardarBtn = document.getElementById('btn-guardar');
+            
+            const soloNumeros = dni.replace(/\D/g, '');
+            
+            if (soloNumeros !== dni) {
+                dniInput.value = soloNumeros;
+            }
+            
+            if (soloNumeros.length > 8) {
+                dniInput.value = soloNumeros.substring(0, 8);
+            }
+            
+            const esValido = soloNumeros.length === 8;
+            
+            const adherenteId = document.getElementById('adherente-id').value;
+            if (esValido && adherenteId) {
+                const dniExistente = adherentes.find(a => a.dni === soloNumeros && a.id != adherenteId);
+                if (dniExistente) {
+                    mostrarError('Este DNI ya está registrado por otro adherente');
+                    dniInput.style.borderColor = '#f44336';
+                    guardarBtn.disabled = true;
+                    return false;
+                }
+            }
+            
+            dniInput.style.borderColor = esValido ? '#4CAF50' : '#ddd';
+            
+            if (telefonoInput) {
+                const telefonoValido = telefonoInput.isValidNumber();
+                guardarBtn.disabled = !(esValido && telefonoValido);
+            } else {
+                guardarBtn.disabled = !esValido;
+            }
+            
+            return esValido;
+        }
+        
+        function cargarAdherentes() {
+            fetch('adherentes.php')
+                .then(response => response.json())
+                .then(data => {
+                    adherentes = data;
+                    aplicarFiltros();
+                    actualizarEstadisticas();
+                    actualizarContadoresFiltros();
+                    verificarCitasProximas();
+                })
+                .catch(error => {
+                    console.error('Error al cargar adherentes:', error);
+                    mostrarError('Error al cargar los adherentes');
+                });
+        }
+        
+        function escapeHTML(texto) {
+            if (!texto) return '';
+            return texto
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+                .replace(/\n/g, '<br>');
+        }
+        
+        function formatearTelefonoParaMostrar(telefono) {
+            if (!telefono) return '';
+            
+            let telefonoLimpio = telefono.replace(/\s+/g, '');
+            
+            const patronPeruano = /^(\+51)(\d{9})$/;
+            const match = telefonoLimpio.match(patronPeruano);
+            
+            if (match) {
+                const codigoPais = match[1];
+                let numero = match[2];
+                
+                const grupos = [];
+                for (let i = 0; i < numero.length; i += 3) {
+                    grupos.push(numero.substring(i, i + 3));
+                }
+                
+                const numeroFormateado = grupos.join(' ');
+                
+                return `
+                    <div class="telefono-info">
+                        <span class="codigo-pais">${codigoPais}</span>
+                        <span class="numero-telefono">${numeroFormateado}</span>
+                    </div>
+                `;
+            }
+            
+            const patronGeneral = /^(\+\d{1,3})(\d{6,})$/;
+            const matchGeneral = telefonoLimpio.match(patronGeneral);
+            
+            if (matchGeneral) {
+                const codigoPais = matchGeneral[1];
+                let numero = matchGeneral[2];
+                
+                const grupos = [];
+                for (let i = 0; i < numero.length; i += 3) {
+                    grupos.push(numero.substring(i, i + 3));
+                }
+                
+                const numeroFormateado = grupos.join(' ');
+                
+                return `
+                    <div class="telefono-info">
+                        <span class="codigo-pais">${codigoPais}</span>
+                        <span class="numero-telefono">${numeroFormateado}</span>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="telefono-info">
+                    <span style="color: #999; font-size: 11px; background: #f0f0f0; padding: 1px 5px; border-radius: 3px;">Sin formato</span>
+                    <span class="numero-telefono">${telefono}</span>
+                </div>
+            `;
+        }
+        
+        function formatearDNI(dni) {
+            if (!dni) return '<span style="color: #999; font-style: italic;">No especificado</span>';
+            
+            const dniLimpio = dni.toString().padStart(8, '0');
+            
+            return `
+                <span class="dni-badge" title="DNI: ${dniLimpio}">
+                    ${dniLimpio}
+                </span>
+            `;
+        }
+        
+        function formatearFechaCita(fechaCita) {
+            if (!fechaCita) return '<span style="color: #999; font-style: italic;">Sin cita</span>';
+            
+            try {
+                const fecha = new Date(fechaCita);
+                
+                const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                
+                const horaFormateada = fecha.toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-weight: 600;">${fechaFormateada}</span>
+                        <span style="color: #666; font-size: 12px;">${horaFormateada}</span>
+                    </div>
+                `;
+            } catch (error) {
+                return `<span style="color: #999;">${fechaCita}</span>`;
+            }
+        }
+        
+        function calcularAlertaCita(fechaCita) {
+            if (!fechaCita) return null;
+            
+            try {
+                const ahora = new Date();
+                const fechaCitaObj = new Date(fechaCita);
+                
+                if (fechaCitaObj < ahora) {
+                    return {
+                        texto: 'CITA PASADA',
+                        clase: 'alerta-pasada',
+                        dias: null
+                    };
+                }
+                
+                const diferencia = fechaCitaObj - ahora;
+                const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+                
+                if (dias > 7) {
+                    return {
+                        texto: `FALTAN ${dias} DÍAS`,
+                        clase: 'alerta-verde',
+                        dias: dias
+                    };
+                } else if (dias > 1) {
+                    return {
+                        texto: `FALTAN ${dias} DÍAS`,
+                        clase: 'alerta-amarillo',
+                        dias: dias
+                    };
+                } else if (dias === 1) {
+                    return {
+                        texto: 'FALTA 1 DÍA',
+                        clase: 'alerta-amarillo',
+                        dias: 1
+                    };
+                } else if (horas > 24) {
+                    return {
+                        texto: `FALTAN ${horas} HORAS`,
+                        clase: 'alerta-amarillo',
+                        dias: 0
+                    };
+                } else if (horas > 1) {
+                    return {
+                        texto: `FALTAN ${horas} HORAS`,
+                        clase: 'alerta-rojo',
+                        dias: 0
+                    };
+                } else if (minutos > 30) {
+                    return {
+                        texto: `FALTAN ${minutos} MIN`,
+                        clase: 'alerta-rojo',
+                        dias: 0
+                    };
+                } else {
+                    return {
+                        texto: '¡CITA INMINENTE!',
+                        clase: 'alerta-rojo',
+                        dias: 0
+                    };
+                }
+            } catch (error) {
+                return null;
+            }
+        }
+        
+        function verificarCitasProximas() {
+            const ahora = new Date();
+            const citasProximas = adherentes.filter(adherente => {
+                if (!adherente.fecha_cita) return false;
+                
+                const fechaCita = new Date(adherente.fecha_cita);
+                const diferencia = fechaCita - ahora;
+                const horas = diferencia / (1000 * 60 * 60);
+                
+                return horas > 0 && horas <= 24;
+            });
+            
+            if (citasProximas.length > 0) {
+                mostrarNotificacionCitas(citasProximas);
+            }
+        }
+        
+        function mostrarNotificacionCitas(citasProximas) {
+            const notificacionExistente = document.getElementById('notificacion-citas');
+            if (notificacionExistente) {
+                notificacionExistente.remove();
+            }
+            
+            const citasHoy = citasProximas.filter(c => {
+                const fechaCita = new Date(c.fecha_cita);
+                const hoy = new Date();
+                return fechaCita.toDateString() === hoy.toDateString();
+            });
+            
+            const citasManana = citasProximas.filter(c => {
+                const fechaCita = new Date(c.fecha_cita);
+                const manana = new Date();
+                manana.setDate(manana.getDate() + 1);
+                return fechaCita.toDateString() === manana.toDateString();
+            });
+            
+            let mensaje = '';
+            if (citasHoy.length > 0) {
+                mensaje += `📅 <strong>${citasHoy.length} cita(s) hoy</strong><br>`;
+            }
+            if (citasManana.length > 0) {
+                mensaje += `📅 <strong>${citasManana.length} cita(s) mañana</strong>`;
+            }
+            
+            if (mensaje) {
+                const notificacionDiv = document.createElement('div');
+                notificacionDiv.id = 'notificacion-citas';
+                notificacionDiv.innerHTML = `
+                    <div style="position: fixed; top: 80px; right: 20px; background: #fff3e0; border-left: 4px solid #FF9800; padding: 15px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 9999; max-width: 300px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="color: #F57C00;"><i class="fas fa-bell"></i> Recordatorio de Citas</strong>
+                            <button onclick="document.getElementById('notificacion-citas').remove()" style="background: none; border: none; color: #666; cursor: pointer;">×</button>
+                        </div>
+                        <div style="font-size: 14px; color: #333;">
+                            ${mensaje}
+                        </div>
+                        <button onclick="filtrarPorCita('24h')" style="margin-top: 10px; padding: 5px 10px; background: #FF9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">
+                            <i class="fas fa-eye"></i> Ver citas próximas (24h)
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(notificacionDiv);
+                
+                setTimeout(() => {
+                    if (document.getElementById('notificacion-citas')) {
+                        document.getElementById('notificacion-citas').remove();
+                    }
+                }, 10000);
+            }
+        }
+        
+        function normalizarTelefonoParaGuardar(telefonoConFormato) {
+            if (!telefonoConFormato) return '';
+            
+            if (telefonoConFormato.startsWith('+')) {
+                return telefonoConFormato.replace(/[^\d+]/g, '');
+            }
+            
+            return telefonoConFormato;
+        }
+        
+        function aplicarFiltroCita() {
+            filtroCitaActual = document.getElementById('filtro-estado-cita').value;
+            paginaActual = 1;
+            aplicarFiltros();
+        }
+        
+        function filtrarPorEstado(estado) {
+            filtroEstadoActual = estado;
+            filtroCitaActual = 'todas';
+            document.getElementById('filtro-estado-cita').value = 'todas';
+            paginaActual = 1;
+            aplicarFiltros();
+            actualizarBotonesFiltro();
+            actualizarCardsActivas();
+            mostrarInfoFiltro();
+        }
+        
+        function filtrarPorCita(tipo) {
+            filtroEstadoActual = 'todos';
+            filtroCitaActual = tipo;
+            document.getElementById('filtro-estado-cita').value = tipo;
+            paginaActual = 1;
+            aplicarFiltros();
+            actualizarBotonesFiltro();
+            actualizarCardsActivas();
+            mostrarInfoFiltro();
+        }
+        
+        function aplicarFiltros() {
+            adherentesFiltrados = adherentes;
+            
+            if (filtroEstadoActual !== 'todos') {
+                adherentesFiltrados = adherentesFiltrados.filter(a => a.estado === filtroEstadoActual);
+            }
+            
+            if (filtroCitaActual !== 'todas') {
+                const ahora = new Date();
+                
+                adherentesFiltrados = adherentesFiltrados.filter(adherente => {
+                    if (!adherente.fecha_cita) return false;
+                    
+                    const fechaCita = new Date(adherente.fecha_cita);
+                    
+                    switch(filtroCitaActual) {
+                        case 'con_cita':
+                            return adherente.fecha_cita !== null;
+                        case 'hoy':
+                            return fechaCita.toDateString() === ahora.toDateString();
+                        case 'semana':
+                            const semanaActual = getWeekNumber(ahora);
+                            const semanaCita = getWeekNumber(fechaCita);
+                            return semanaActual === semanaCita && fechaCita >= ahora;
+                        case 'mes':
+                            return fechaCita.getMonth() === ahora.getMonth() && 
+                                   fechaCita.getFullYear() === ahora.getFullYear() &&
+                                   fechaCita >= ahora;
+                        case '24h':
+                            const diferencia24h = fechaCita - ahora;
+                            const horas24h = diferencia24h / (1000 * 60 * 60);
+                            return horas24h > 0 && horas24h <= 24;
+                        case '3h':
+                            const diferencia3h = fechaCita - ahora;
+                            const horas3h = diferencia3h / (1000 * 60 * 60);
+                            return horas3h > 0 && horas3h <= 3;
+                        case '2h':
+                            const diferencia2h = fechaCita - ahora;
+                            const horas2h = diferencia2h / (1000 * 60 * 60);
+                            return horas2h > 0 && horas2h <= 2;
+                        case 'pasadas':
+                            return fechaCita < ahora;
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            if (busquedaActual.trim() !== '') {
+                adherentesFiltrados = adherentesFiltrados.filter(adherente => {
+                    const telefonoBusqueda = adherente.telefono ? 
+                        adherente.telefono.replace(/\s+/g, '') : '';
+                    
+                    const dniBusqueda = adherente.dni ? adherente.dni.toString() : '';
+                    
+                    return adherente.nombre.toLowerCase().includes(busquedaActual) ||
+                           adherente.apellidos.toLowerCase().includes(busquedaActual) ||
+                           dniBusqueda.toLowerCase().includes(busquedaActual) ||
+                           telefonoBusqueda.toLowerCase().includes(busquedaActual.replace(/\s+/g, '')) ||
+                           (adherente.observaciones && adherente.observaciones.toLowerCase().includes(busquedaActual));
+                });
+            }
+            
+            actualizarContadoresFiltros();
+            actualizarPaginacion();
+            mostrarAdherentesPagina();
+            
+            const hayFiltrosActivos = filtroEstadoActual !== 'todos' || 
+                                     filtroCitaActual !== 'todas' ||
+                                     busquedaActual.trim() !== '';
+            document.getElementById('btn-reset-filtros').style.display = hayFiltrosActivos ? 'flex' : 'none';
+        }
+        
+        function getWeekNumber(date) {
+            const d = new Date(date);
+            d.setHours(0, 0, 0, 0);
+            d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+            const yearStart = new Date(d.getFullYear(), 0, 1);
+            const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+            return [d.getFullYear(), weekNo];
+        }
+        
+        function mostrarAdherentesPagina() {
+            const tbody = document.getElementById('adherentes-body');
+            tbody.innerHTML = '';
+            
+            if (adherentesFiltrados.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11" style="text-align: center; padding: 40px; color: #777;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i>
+                            <p>No se encontraron adherentes con los filtros aplicados</p>
+                            <button onclick="resetearFiltros()" style="margin-top: 10px; padding: 8px 16px; background: #4a6fa5; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                                <i class="fas fa-times"></i> Limpiar filtros
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('pagination-container').style.display = 'none';
+                return;
+            }
+            
+            let inicio = 0;
+            let fin = adherentesFiltrados.length;
+            
+            if (itemsPorPagina !== 'all') {
+                inicio = (paginaActual - 1) * itemsPorPagina;
+                fin = Math.min(inicio + itemsPorPagina, adherentesFiltrados.length);
+            }
+            
+            const adherentesPagina = adherentesFiltrados.slice(inicio, fin);
+            
+            adherentesPagina.forEach(adherente => {
+                const fila = document.createElement('tr');
+                
+                const estadoClass = adherente.estado === 'adherente' ? 
+                    'estado-adherente' : 'estado-no-adherente';
+                const estadoText = adherente.estado === 'adherente' ? 
+                    'ADHERENTE' : 'NO ADHERENTE';
+                
+                const fechaTamizaje = adherente.fecha_tamizaje || 'No realizado';
+                
+                let tooltipText = '';
+                if (adherente.observaciones) {
+                    tooltipText = adherente.observaciones.length > 100 ? 
+                        adherente.observaciones.substring(0, 100) + '...' : 
+                        adherente.observaciones;
+                }
+                
+                const edadDisplay = adherente.edad ? 
+                    `<span class="edad-badge">${adherente.edad} años</span>` : 
+                    '<span style="color: #999; font-style: italic;">No especificada</span>';
+                
+                const telefonoDisplay = formatearTelefonoParaMostrar(adherente.telefono);
+                
+                const dniDisplay = formatearDNI(adherente.dni);
+                
+                const fechaCitaDisplay = formatearFechaCita(adherente.fecha_cita);
+                
+                const alertaCita = calcularAlertaCita(adherente.fecha_cita);
+                const alertaDisplay = alertaCita ? 
+                    `<span class="alerta-cita ${alertaCita.clase}">${alertaCita.texto}</span>` : 
+                    '<span style="color: #999; font-style: italic;">Sin cita</span>';
+                
+                fila.innerHTML = `
+                    <td>${dniDisplay}</td>
+                    <td>${adherente.nombre}</td>
+                    <td>${adherente.apellidos}</td>
+                    <td>${telefonoDisplay}</td>
+                    <td>${edadDisplay}</td>
+                    <td style="text-align: center;"><span class="estado ${estadoClass}">${estadoText}</span></td>
+                    <td>${fechaCitaDisplay}</td>
+                    <td style="text-align: center;">${alertaDisplay}</td>
+                    <td>${fechaTamizaje}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn obs-btn" onclick="mostrarObservaciones(${adherente.id}, '${escapeHTML(adherente.nombre)} ${escapeHTML(adherente.apellidos)}', '${escapeHTML(adherente.observaciones)}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn edit-btn" onclick="editarAdherente(${adherente.id})">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn cita-btn" onclick="mostrarModalCita(${adherente.id}, '${escapeHTML(adherente.nombre)} ${escapeHTML(adherente.apellidos)}', '${adherente.fecha_cita || ''}')">
+                                <i class="fas fa-calendar-alt"></i> Cita
+                            </button>
+                            ${adherente.estado === 'no adherente' ? 
+                                `<button class="action-btn tamizaje-btn" onclick="mostrarModalTamizaje(${adherente.id}, '${escapeHTML(adherente.nombre)} ${escapeHTML(adherente.apellidos)}')">
+                                    <i class="fas fa-check"></i> Tamizaje
+                                </button>` : ''
+                            }
+                            <button class="action-btn delete-btn" onclick="eliminarAdherente(${adherente.id})">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(fila);
+            });
+            
+            if (itemsPorPagina !== 'all' && adherentesFiltrados.length > itemsPorPagina) {
+                document.getElementById('pagination-container').style.display = 'flex';
+            } else {
+                document.getElementById('pagination-container').style.display = 'none';
+            }
+        }
+        
+        function editarAdherente(id) {
+            const adherente = adherentes.find(a => a.id == id);
+            
+            if (!adherente) {
+                mostrarError('No se encontró el adherente');
+                return;
+            }
+            
+            document.getElementById('modal-title').textContent = 'Editar Adherente';
+            document.getElementById('adherente-id').value = adherente.id;
+            document.getElementById('dni').value = adherente.dni || '';
+            document.getElementById('nombre').value = adherente.nombre;
+            document.getElementById('apellidos').value = adherente.apellidos;
+            document.getElementById('edad').value = adherente.edad || '';
+            document.getElementById('observaciones').value = adherente.observaciones || '';
+            
+            document.getElementById('modal-adherente').style.display = 'flex';
+            
+            setTimeout(() => {
+                if (telefonoInput) {
+                    telefonoInput.destroy();
+                }
+                inicializarInputTelefono();
+                
+                if (adherente.telefono) {
+                    telefonoInput.setNumber(adherente.telefono);
+                    validarTelefono();
+                }
+            }, 100);
+        }
+        
+        function mostrarModalCita(id, nombreCompleto, fechaCitaActual = null) {
+            document.getElementById('cita-id').value = id;
+            document.getElementById('nombre-adherente-cita').textContent = nombreCompleto;
+            document.getElementById('modal-cita-title').textContent = fechaCitaActual ? 'Editar Cita' : 'Agendar Cita';
+            
+            if (fechaCitaActual) {
+                fechaCitaInput.setDate(fechaCitaActual);
+            } else {
+                fechaCitaInput.clear();
+            }
+            
+            document.getElementById('modal-cita').style.display = 'flex';
+        }
+        
+        function cerrarModalCita() {
+            document.getElementById('modal-cita').style.display = 'none';
+            document.getElementById('form-cita').reset();
+            fechaCitaInput.clear();
+        }
+        
+        function guardarCita(e) {
+            e.preventDefault();
+            
+            const adherenteId = document.getElementById('cita-id').value;
+            const fechaCita = document.getElementById('fecha-cita').value;
+            const observaciones = document.getElementById('observaciones-cita').value;
+            
+            if (!fechaCita) {
+                mostrarError('Por favor, seleccione una fecha y hora para la cita');
+                return;
+            }
+            
+            const citaData = {
+                id: adherenteId,
+                fecha_cita: fechaCita,
+                observaciones_cita: observaciones,
+                esCita: true
+            };
+            
+            fetch('adherentes.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(citaData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cerrarModalCita();
+                    cargarAdherentes();
+                    mostrarMensaje('Cita guardada exitosamente', 'success');
+                } else {
+                    mostrarError(data.message || 'Error al guardar la cita');
+                }
+            })
+            .catch(error => {
+                console.error('Error al guardar cita:', error);
+                mostrarError('Error al guardar la cita');
+            });
+        }
+        
+        function actualizarPaginacion() {
+            if (itemsPorPagina === 'all' || adherentesFiltrados.length <= itemsPorPagina) {
+                totalPaginas = 1;
+                paginaActual = 1;
+            } else {
+                totalPaginas = Math.ceil(adherentesFiltrados.length / itemsPorPagina);
+                if (paginaActual > totalPaginas) {
+                    paginaActual = totalPaginas;
+                }
+            }
+            
+            actualizarInfoPaginacion();
+            actualizarBotonesPaginacion();
+            generarNumerosPagina();
+        }
+        
+        function actualizarInfoPaginacion() {
+            const infoDiv = document.getElementById('pagination-info');
+            const total = adherentesFiltrados.length;
+            
+            if (itemsPorPagina === 'all' || total === 0) {
+                infoDiv.textContent = `Mostrando ${total} registro${total !== 1 ? 's' : ''}`;
+            } else {
+                const inicio = (paginaActual - 1) * itemsPorPagina + 1;
+                const fin = Math.min(paginaActual * itemsPorPagina, total);
+                infoDiv.textContent = `Mostrando ${inicio} a ${fin} de ${total} registro${total !== 1 ? 's' : ''}`;
+            }
+        }
+        
+        function actualizarBotonesPaginacion() {
+            const firstBtn = document.getElementById('first-page');
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            const lastBtn = document.getElementById('last-page');
+            
+            if (itemsPorPagina === 'all' || totalPaginas <= 1) {
+                firstBtn.disabled = true;
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                lastBtn.disabled = true;
+            } else {
+                firstBtn.disabled = paginaActual === 1;
+                prevBtn.disabled = paginaActual === 1;
+                nextBtn.disabled = paginaActual === totalPaginas;
+                lastBtn.disabled = paginaActual === totalPaginas;
+            }
+        }
+        
+        function generarNumerosPagina() {
+            const paginationNumbers = document.getElementById('pagination-numbers');
+            paginationNumbers.innerHTML = '';
+            
+            if (itemsPorPagina === 'all' || totalPaginas <= 1) return;
+            
+            agregarNumeroPagina(1);
+            
+            if (paginaActual > 3) {
+                agregarEllipsis();
+            }
+            
+            const inicio = Math.max(2, paginaActual - 1);
+            const fin = Math.min(totalPaginas - 1, paginaActual + 1);
+            
+            for (let i = inicio; i <= fin; i++) {
+                if (i !== 1 && i !== totalPaginas) {
+                    agregarNumeroPagina(i);
+                }
+            }
+            
+            if (paginaActual < totalPaginas - 2) {
+                agregarEllipsis();
+            }
+            
+            if (totalPaginas > 1) {
+                agregarNumeroPagina(totalPaginas);
+            }
+        }
+        
+        function agregarNumeroPagina(numero) {
+            const paginationNumbers = document.getElementById('pagination-numbers');
+            const pageNumber = document.createElement('div');
+            pageNumber.className = `page-number ${numero === paginaActual ? 'active' : ''}`;
+            pageNumber.textContent = numero;
+            pageNumber.onclick = () => irAPagina(numero);
+            paginationNumbers.appendChild(pageNumber);
+        }
+        
+        function agregarEllipsis() {
+            const paginationNumbers = document.getElementById('pagination-numbers');
+            const ellipsis = document.createElement('div');
+            ellipsis.className = 'page-number ellipsis';
+            ellipsis.textContent = '...';
+            paginationNumbers.appendChild(ellipsis);
+        }
+        
+        function cambiarItemsPorPagina() {
+            const select = document.getElementById('items-per-page');
+            itemsPorPagina = select.value === 'all' ? 'all' : parseInt(select.value);
+            paginaActual = 1;
+            aplicarFiltros();
+        }
+        
+        function irAPagina(pagina) {
+            paginaActual = pagina;
+            aplicarFiltros();
+        }
+        
+        function paginaAnterior() {
+            if (paginaActual > 1) {
+                paginaActual--;
+                aplicarFiltros();
+            }
+        }
+        
+        function paginaSiguiente() {
+            if (paginaActual < totalPaginas) {
+                paginaActual++;
+                aplicarFiltros();
+            }
+        }
+        
+        function irAUltimaPagina() {
+            paginaActual = totalPaginas;
+            aplicarFiltros();
+        }
+        
+        function actualizarBotonesFiltro() {
+            document.querySelectorAll('.filtro-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (filtroEstadoActual !== 'todos') {
+                const botonActivo = document.getElementById(`filtro-${filtroEstadoActual.replace(' ', '-')}`);
+                if (botonActivo) {
+                    botonActivo.classList.add('active');
+                }
+            } else if (filtroCitaActual !== 'todas') {
+                document.getElementById('filtro-citas').classList.add('active');
+            } else {
+                document.getElementById('filtro-todos').classList.add('active');
+            }
+        }
+        
+        function actualizarCardsActivas() {
+            document.querySelectorAll('.dashboard-cards .card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            let cardId = '';
+            if (filtroEstadoActual !== 'todos') {
+                switch(filtroEstadoActual) {
+                    case 'todos':
+                        cardId = 'card-total';
+                        break;
+                    case 'adherente':
+                        cardId = 'card-adherentes';
+                        break;
+                    case 'no adherente':
+                        cardId = 'card-no-adherentes';
+                        break;
+                }
+            } else if (filtroCitaActual !== 'todas') {
+                cardId = 'card-citas';
+            } else {
+                cardId = 'card-total';
+            }
+            
+            if (cardId) {
+                document.getElementById(cardId).classList.add('active');
+            }
+        }
+        
+        function actualizarContadoresFiltros() {
+            const total = adherentes.length;
+            const adherentesActivos = adherentes.filter(a => a.estado === 'adherente').length;
+            const noAdherentes = adherentes.filter(a => a.estado === 'no adherente').length;
+            const conCita = adherentes.filter(a => a.fecha_cita !== null).length;
+            
+            document.getElementById('contador-todos').textContent = total;
+            document.getElementById('contador-adherentes').textContent = adherentesActivos;
+            document.getElementById('contador-no-adherentes').textContent = noAdherentes;
+            document.getElementById('contador-citas').textContent = conCita;
+            
+            document.getElementById('total-adherentes').textContent = total;
+            document.getElementById('total-adherentes-activos').textContent = adherentesActivos;
+            document.getElementById('total-no-adherentes').textContent = noAdherentes;
+            document.getElementById('total-citas').textContent = conCita;
+        }
+        
+        function mostrarInfoFiltro() {
+            const infoDiv = document.getElementById('info-filtros');
+            const textoFiltro = document.getElementById('texto-filtro');
+            
+            let texto = '';
+            
+            if (filtroEstadoActual !== 'todos') {
+                const estadoTexto = filtroEstadoActual === 'adherente' ? 'Adherentes' : 'No Adherentes';
+                texto += `Filtrado por: ${estadoTexto}`;
+            }
+            
+            if (filtroCitaActual !== 'todas') {
+                if (texto !== '') texto += ' | ';
+                const textoCita = {
+                    '24h': 'Citas próximas (24h)',
+                    '3h': 'Citas próximas (3h)',
+                    '2h': 'Citas próximas (2h)'
+                }[filtroCitaActual];
+                texto += `Filtrado por: ${textoCita}`;
+            }
+            
+            if (busquedaActual.trim() !== '') {
+                if (texto !== '') texto += ' | ';
+                texto += `Búsqueda: "${busquedaActual}"`;
+            }
+            
+            if (texto !== '') {
+                textoFiltro.textContent = texto;
+                infoDiv.style.display = 'block';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+        
+        function resetearFiltros() {
+            filtroEstadoActual = 'todos';
+            filtroCitaActual = 'todas';
+            busquedaActual = '';
+            paginaActual = 1;
+            
+            document.getElementById('search-input').value = '';
+            document.getElementById('filtro-estado-cita').value = 'todas';
+            
+            aplicarFiltros();
+            actualizarBotonesFiltro();
+            actualizarCardsActivas();
+            mostrarInfoFiltro();
+        }
+        
+        function mostrarObservaciones(id, nombreCompleto, observaciones) {
+            const modalId = 'modal-observaciones';
+            let modal = document.getElementById(modalId);
+            
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal modal-observaciones';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Observaciones de ${nombreCompleto}</h2>
+                            <button class="close-modal" onclick="document.getElementById('${modalId}').style.display='none'">&times;</button>
+                        </div>
+                        <div id="observaciones-contenido">
+                            <!-- Contenido dinámico -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-cancel" onclick="document.getElementById('${modalId}').style.display='none'">Cerrar</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+            
+            const contenido = document.getElementById('observaciones-contenido');
+            if (observaciones && observaciones.trim() !== '') {
+                contenido.innerHTML = `
+                    <div class="observaciones-content">
+                        ${observaciones.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+            } else {
+                contenido.innerHTML = `
+                    <div class="sin-observaciones">
+                        <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i>
+                        <p>No hay observaciones registradas para este adherente.</p>
+                    </div>
+                `;
+            }
+            
+            modal.style.display = 'flex';
+        }
+        
+        function actualizarEstadisticas() {
+            const total = adherentes.length;
+            const adherentesActivos = adherentes.filter(a => a.estado === 'adherente').length;
+            const noAdherentes = adherentes.filter(a => a.estado === 'no adherente').length;
+            const conCita = adherentes.filter(a => a.fecha_cita !== null).length;
+            
+            document.getElementById('total-adherentes').textContent = total;
+            document.getElementById('total-adherentes-activos').textContent = adherentesActivos;
+            document.getElementById('total-no-adherentes').textContent = noAdherentes;
+            document.getElementById('total-citas').textContent = conCita;
+        }
+        
+        function mostrarModalNuevo() {
+            document.getElementById('modal-title').textContent = 'Nuevo Adherente';
+            document.getElementById('form-adherente').reset();
+            document.getElementById('adherente-id').value = '';
+            document.getElementById('dni').value = '';
+            document.getElementById('edad').value = '';
+            document.getElementById('telefono-error').style.display = 'none';
+            document.getElementById('telefono-valido').style.display = 'none';
+            document.getElementById('btn-guardar').disabled = true;
+            
+            document.getElementById('modal-adherente').style.display = 'flex';
+            
+            setTimeout(() => {
+                if (telefonoInput) {
+                    telefonoInput.destroy();
+                }
+                inicializarInputTelefono();
+            }, 100);
+        }
+        
+        function cerrarModal() {
+            document.getElementById('modal-adherente').style.display = 'none';
+            if (telefonoInput) {
+                telefonoInput.destroy();
+                telefonoInput = null;
+            }
+        }
+        
+        function guardarAdherente(e) {
+            e.preventDefault();
+            
+            const adherenteId = document.getElementById('adherente-id').value;
+            const dni = document.getElementById('dni').value.trim();
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellidos = document.getElementById('apellidos').value.trim();
+            const edad = document.getElementById('edad').value.trim();
+            const observaciones = document.getElementById('observaciones').value.trim();
+            
+            if (!dni) {
+                mostrarError('El DNI es obligatorio');
+                document.getElementById('dni').focus();
+                return;
+            }
+            
+            if (dni.length !== 8) {
+                mostrarError('El DNI debe tener exactamente 8 dígitos');
+                document.getElementById('dni').focus();
+                return;
+            }
+            
+            if (!/^\d+$/.test(dni)) {
+                mostrarError('El DNI solo puede contener números');
+                document.getElementById('dni').focus();
+                return;
+            }
+            
+            if (!nombre) {
+                mostrarError('El nombre es obligatorio');
+                document.getElementById('nombre').focus();
+                return;
+            }
+            
+            if (!apellidos) {
+                mostrarError('Los apellidos son obligatorios');
+                document.getElementById('apellidos').focus();
+                return;
+            }
+            
+            if (!edad) {
+                mostrarError('La edad es obligatoria');
+                document.getElementById('edad').focus();
+                return;
+            }
+            
+            const edadNum = parseInt(edad);
+            if (isNaN(edadNum) || edadNum < 1 || edadNum > 120) {
+                mostrarError('La edad debe ser un número entre 1 y 120 años');
+                document.getElementById('edad').focus();
+                return;
+            }
+            
+            let telefono = '';
+            if (telefonoInput) {
+                telefono = telefonoInput.getNumber();
+                const esValido = telefonoInput.isValidNumber();
+                
+                if (!esValido) {
+                    mostrarError('Por favor, ingresa un número de teléfono válido con código de país');
+                    document.getElementById('telefono').focus();
+                    return;
+                }
+            }
+            
+            if (!telefono) {
+                mostrarError('El teléfono es obligatorio');
+                document.getElementById('telefono').focus();
+                return;
+            }
+            
+            telefono = normalizarTelefonoParaGuardar(telefono);
+            
+            const adherenteData = {
+                id: adherenteId || 0,
+                dni: dni,
+                nombre: nombre,
+                apellidos: apellidos,
+                telefono: telefono,
+                edad: edadNum,
+                observaciones: observaciones,
+                esEdicion: adherenteId ? true : false
+            };
+            
+            fetch('adherentes.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(adherenteData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cerrarModal();
+                    cargarAdherentes();
+                    mostrarMensaje(adherenteId ? 'Adherente actualizado exitosamente' : 'Adherente guardado exitosamente', 'success');
+                } else {
+                    mostrarError(data.message || 'Error al guardar el adherente');
+                }
+            })
+            .catch(error => {
+                console.error('Error al guardar adherente:', error);
+                mostrarError('Error al guardar el adherente');
+            });
+        }
+        
+        function mostrarModalTamizaje(id, nombreCompleto) {
+            document.getElementById('tamizaje-id').value = id;
+            document.getElementById('nombre-adherente').textContent = nombreCompleto;
+            document.getElementById('modal-tamizaje').style.display = 'flex';
+        }
+        
+        function cerrarModalTamizaje() {
+            document.getElementById('modal-tamizaje').style.display = 'none';
+            document.getElementById('form-tamizaje').reset();
+        }
+        
+        function confirmarTamizaje(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('tamizaje-id').value;
+            const observaciones = document.getElementById('observaciones-tamizaje').value;
+            
+            const tamizajeData = {
+                id: id,
+                observaciones: observaciones,
+                esTamizaje: true
+            };
+            
+            fetch('adherentes.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tamizajeData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cerrarModalTamizaje();
+                    cargarAdherentes();
+                    mostrarMensaje('Tamizaje registrado exitosamente. Estado cambiado a Adherente', 'success');
+                } else {
+                    mostrarError(data.message || 'Error al registrar el tamizaje');
+                }
+            })
+            .catch(error => {
+                console.error('Error al registrar tamizaje:', error);
+                mostrarError('Error al registrar el tamizaje');
+            });
+        }
+        
+        function eliminarAdherente(id) {
+            if (!confirm('¿Está seguro de eliminar este adherente?')) {
+                return;
+            }
+            
+            const adherenteData = { id: id };
+            
+            fetch('adherentes.php', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(adherenteData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cargarAdherentes();
+                    mostrarMensaje('Adherente eliminado exitosamente', 'success');
+                } else {
+                    mostrarError(data.message || 'Error al eliminar el adherente');
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar adherente:', error);
+                mostrarError('Error al eliminar el adherente');
+            });
+        }
+        
+        function mostrarMensaje(mensaje, tipo) {
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.textContent = mensaje;
+            mensajeDiv.className = `alert alert-${tipo}`;
+            
+            document.body.appendChild(mensajeDiv);
+            
+            setTimeout(() => {
+                mensajeDiv.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(mensajeDiv);
+                }, 300);
+            }, 3000);
+        }
+        
+        function mostrarError(mensaje) {
+            mostrarMensaje(mensaje, 'error');
+        }
+    </script>
+</body>
+</html>

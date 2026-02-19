@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>WPP Auto Sender</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- El contenido HTML se mantiene igual que en tu archivo original -->
+    <div class="container">
+        <header>
+            <h1><i class="fab fa-whatsapp"></i> WPP Auto Sender</h1>
+            <p>Envío automático de mensajes y archivos por WhatsApp</p>
+        </header>
+
+        <div class="status-bar">
+            <div id="statusIndicator" class="status-indicator"></div>
+            <span id="statusText">Conectando...</span>
+        </div>
+
+        <div class="main-content">
+            <!-- Columna Izquierda -->
+            <div class="column">
+                <!-- Panel de Estado -->
+                <div class="panel">
+                    <h2><i class="fas fa-signal"></i> Estado WhatsApp</h2>
+                    <div class="status-card">
+                        <h3 id="statusTitle">Conectando...</h3>
+                        <p id="statusDescription">Esperando conexión con WhatsApp Web</p>
+                        <img id="qr" style="display:none;">
+                    </div>
+                </div>
+
+<!-- Panel de Contactos -->
+<div class="panel">
+    <h2><i class="fas fa-users"></i> Contactos</h2>
+    
+    <div class="contact-actions">
+        <div class="filter-group">
+            <label for="estadoFilter">Filtrar por estado:</label>
+            <select id="estadoFilter">
+                <option value="todos">📋 Todos los contactos</option>
+                <option value="adherente">✅ Solo adherentes</option>
+                <option value="no adherente">❌ No adherentes</option>
+            </select>
+        </div>
+        
+        <!-- FILTRO DE CITAS -->
+        <div class="filter-group">
+            <label for="citaFilter">Filtrar por cita:</label>
+            <select id="citaFilter">
+                <option value="">📅 Todas las citas</option>
+                <option value="24h">⏰ Citas en 24h (1-24 horas restantes)</option>
+                <option value="3h">⌛ Citas en 3h (1-3 horas restantes)</option>
+            </select>
+        </div>
+        
+        <!-- SELECCIÓN POR LOTES FIJOS DE 50 -->
+        <div class="batch-selection">
+            <div class="batch-header">
+                <i class="fas fa-layer-group"></i>
+                <span>Selección por lotes (50 contactos por lote)</span>
+            </div>
+            
+            <div class="text-center">
+                <span class="current-batch" id="currentBatchDisplay">Lote 1</span>
+            </div>
+            
+            <div class="batch-controls">
+                <button class="batch-btn" onclick="selectCurrentBatch()">
+                    <i class="fas fa-check-circle"></i> Seleccionar lote
+                </button>
+                <button class="batch-btn" onclick="deselectCurrentBatch()">
+                    <i class="fas fa-times-circle"></i> Deseleccionar lote
+                </button>
+            </div>
+            
+            <div class="batch-navigation">
+                <button class="batch-nav-btn" id="prevBatchBtn" onclick="previousBatch()" disabled>
+                    <i class="fas fa-arrow-left"></i> Lote anterior
+                </button>
+                <button class="batch-nav-btn" id="nextBatchBtn" onclick="nextBatch()">
+                    Siguiente lote <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="batch-info">
+                <div>Mostrando <span id="batchRangeDisplay">1 - 50</span></div>
+                <div class="batch-progress">
+                    <div class="batch-progress-bar" id="batchProgressBar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="selection-actions">
+            <button class="btn btn-outline" onclick="selectAll()">
+                <i class="fas fa-check-square"></i> Seleccionar Todos
+            </button>
+            <button class="btn btn-outline" onclick="deselectAll()">
+                <i class="far fa-square"></i> Deseleccionar Todos
+            </button>
+        </div>
+    </div>
+
+    <div class="contact-list" id="contactList">
+        <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Cargando contactos...
+        </div>
+    </div>
+
+    <p id="selectedCount">0 contactos seleccionados</p>
+</div>
+            </div>
+
+            <!-- Columna Derecha -->
+            <div class="column">
+                <!-- Panel de Configuración -->
+                <div class="panel">
+                    <h2><i class="fas fa-cogs"></i> Configuración</h2>
+                    
+                    <!-- Sección de Semana (solo visible cuando NO es filtro adherente) -->
+                    <div id="weekSection" class="config-section">
+                        <div class="form-group">
+                            <label for="weekSelect"><i class="fas fa-calendar-week"></i> Seleccionar Semana</label>
+                            <select id="weekSelect">
+                                <option value="">-- Seleccionar semana --</option>
+                                <option value="1">📅 Semana 1</option>
+                                <option value="2">📅 Semana 2</option>
+                                <option value="3">📅 Semana 3</option>
+                                <option value="4">📅 Semana 4</option>
+                                <option value="5">📅 Semana 5</option>
+                                <option value="6">📅 Semana 6</option>
+                                <option value="7">📅 Semana 7</option>
+                                <option value="8">📅 Semana 8</option>
+                                <option value="9">📅 Semana 9</option>
+                                <option value="10">📅 Semana 10</option>
+                                <option value="11">📅 Semana 11</option>
+                                <option value="12">📅 Semana 12</option>
+                                <option value="13">📅 Semana 13</option>
+                                <option value="14">📅 Semana 14</option>
+                                <option value="15">📅 Semana 15</option>
+                                <option value="16">📅 Semana 16</option>
+                                <option value="17">📅 Semana 17</option>
+                                <option value="18">📅 Semana 18</option>
+                                <option value="19">📅 Semana 19</option>
+                                <option value="20">📅 Semana 20</option>
+                                <option value="21">📅 Semana 21</option>
+                                <option value="22">📅 Semana 22</option>
+                                <option value="23">📅 Semana 23</option>
+                                <option value="24">📅 Semana 24</option>
+                            </select>
+                        </div>
+
+                        <div id="autoFilesBox" class="file-info" style="display:none;">
+                            <h4><i class="fas fa-paperclip"></i> Archivos automáticos</h4>
+                            <div id="autoFilesList"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mensaje para adherentes -->
+                    <div id="adherenteMessage" class="adherente-message" style="display:none;">
+                        <h4><i class="fas fa-info-circle"></i> Modo adherentes activado</h4>
+                        <p>Solo se enviará el mensaje personalizado. No hay configuración de semana para adherentes.</p>
+                    </div>
+
+                    <!-- Área de Mensaje -->
+                    <div class="form-group">
+                        <label for="messageBox"><i class="fas fa-comment-dots"></i> Mensaje Personalizado</label>
+                        <textarea id="messageBox" name="message" 
+                                  placeholder="Escribe tu mensaje aquí... 
+También puedes usar variables como {nombre}, {semana}, etc." 
+                                  rows="8"></textarea>
+                        <span class="message-hint">Puedes incluir variables como {nombre} para personalizar cada mensaje</span>
+                    </div>
+
+                    <!-- Botón de Envío -->
+                    <div class="send-section">
+                        <button id="sendButton" class="btn btn-primary btn-lg" disabled 
+                                style="width:100%; padding: 15px; font-size: 1.1em;">
+                            <i class="fab fa-whatsapp"></i> Iniciar Envío
+                            <span id="selectedBadge" style="margin-left: 10px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px;">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panel de Estado Actual y Historial -->
+                <div class="panel">
+                    <div class="current-status">
+                        <h3><i class="fas fa-paper-plane"></i> Estado Actual</h3>
+                        <div class="status-content" id="currentStatus">
+                            Esperando para iniciar envío...
+                        </div>
+                    </div>
+
+                    <div class="history-section">
+                        <div class="history-header">
+                            <h3><i class="fas fa-history"></i> Historial de Envíos</h3>
+                            <button class="btn btn-danger btn-sm" onclick="clearHistory()">
+                                <i class="fas fa-trash"></i> Limpiar Historial
+                            </button>
+                        </div>
+                        
+                        <div class="history" id="history">
+                            <div class="history-empty">
+                                <i class="fas fa-inbox fa-2x" style="color: #dee2e6; margin-bottom: 10px;"></i><br>
+                                No hay envíos recientes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-exclamation-triangle"></i> Confirmar Envío</h2>
+            <p id="confirmMessage">¿Estás seguro de que deseas enviar el mensaje a los contactos seleccionados?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmSend()">Confirmar Envío</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación Limpiar Historial -->
+    <div class="modal" id="clearHistoryModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-trash"></i> Limpiar Historial</h2>
+            <p>¿Estás seguro de que deseas limpiar todo el historial de envíos?</p>
+            <p style="color: #dc3545; font-size: 0.9em; margin-top: 10px;">
+                <i class="fas fa-exclamation-circle"></i> Esta acción no se puede deshacer
+            </p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeClearHistoryModal()">Cancelar</button>
+                <button class="btn btn-danger" onclick="confirmClearHistory()">Limpiar Historial</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div class="notification" id="notification"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

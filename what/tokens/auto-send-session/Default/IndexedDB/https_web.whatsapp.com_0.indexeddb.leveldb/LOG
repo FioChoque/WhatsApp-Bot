@@ -1,0 +1,18 @@
+2026/02/17-22:17:49.171 3068 Reusing MANIFEST D:\home\htdocs\whatsapp-bot_unido todo\whatsapp-bot\what\tokens\auto-send-session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/02/17-22:17:49.171 3068 Recovering log #76
+2026/02/17-22:17:49.198 3068 Reusing old log D:\home\htdocs\whatsapp-bot_unido todo\whatsapp-bot\what\tokens\auto-send-session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000076.log 
+2026/02/17-22:17:52.745 340c Level-0 table #84: started
+2026/02/17-22:17:52.994 340c Level-0 table #84: 2134911 bytes OK
+2026/02/17-22:17:53.123 340c Delete type=0 #76
+2026/02/17-22:17:53.228 3068 Compacting 1@1 + 4@2 files
+2026/02/17-22:17:53.440 3068 Generated table #85@1: 61593 keys, 2200640 bytes
+2026/02/17-22:17:53.599 3068 Generated table #86@1: 68968 keys, 2263416 bytes
+2026/02/17-22:17:53.698 3068 Generated table #87@1: 455 keys, 2122468 bytes
+2026/02/17-22:17:53.756 3068 Generated table #88@1: 11883 keys, 992523 bytes
+2026/02/17-22:17:53.756 3068 Compacted 1@1 + 4@2 files => 7579047 bytes
+2026/02/17-22:17:53.800 3068 compacted to: files[ 0 0 4 0 0 0 0 ]
+2026/02/17-22:17:53.800 3068 Delete type=2 #78
+2026/02/17-22:17:53.801 3068 Delete type=2 #79
+2026/02/17-22:17:53.801 3068 Delete type=2 #80
+2026/02/17-22:17:53.801 3068 Delete type=2 #81
+2026/02/17-22:17:53.801 3068 Delete type=2 #84
