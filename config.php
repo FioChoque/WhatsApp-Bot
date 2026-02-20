@@ -2,10 +2,14 @@
 session_start();
 
 class Database {
-    private $host = "localhost";
-    private $db_name = "whatsaap_bd";
+    #private $host = "localhost";
+    #private $db_name = "whatsaap_bd";
+    #private $username = "root";
+    #private $password = "";
+    private $host = "mysql.railway.internal";
+    private $db_name = "railway";
     private $username = "root";
-    private $password = "";
+    private $password = "oOxvzzPrsXOXrPFWmLiDrExeabIZWdVr";
     public $conn;
 
     public function getConnection() {
