@@ -308,7 +308,7 @@
             btnLogin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
             
             // Enviar datos al servidor
-            fetch('auth.php?action=login', {
+            fetch('http://whatsapp-bot-production-8897.up.railway.app/auth.php?action=login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
