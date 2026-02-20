@@ -1,4 +1,18 @@
 <?php
+// 1. Habilitar CORS para que Postman y tu App puedan conectar
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+// Si es una petición de tipo OPTIONS (pre-vuelo), terminar aquí
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit;
+}
+
+// 2. Iniciar sesión (INDISPENSABLE para que el login funcione)
+session_start();
+
 require_once 'config.php';
 
 $database = new Database();
