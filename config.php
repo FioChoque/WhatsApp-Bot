@@ -6,7 +6,7 @@ class Database {
     #private $db_name = "whatsaap_bd";
     #private $username = "root";
     #private $password = "";
-    private $host = "mysql.railway.internal";
+    private $host = "trolley.proxy.rlwy.net";
     private $db_name = "railway";
     private $username = "root";
     private $password = "oOxvzzPrsXOXrPFWmLiDrExeabIZWdVr";
